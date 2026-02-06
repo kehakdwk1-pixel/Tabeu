@@ -1,5 +1,48 @@
 import { useState, useEffect } from "react";
 
+// 로딩 애니메이션 컴포넌트
+function LoadingScreen({ onComplete }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  return (
+    <div className="loading-screen">
+      {/* 배경 이미지 */}
+      <div className="loading-bg" />
+      
+      {/* 먹물 번짐 효과 */}
+      <div className="ink-spread-container">
+        <div className="ink-blob ink-blob-1" />
+        <div className="ink-blob ink-blob-2" />
+        <div className="ink-blob ink-blob-3" />
+        <div className="ink-blob ink-blob-4" />
+      </div>
+      
+      {/* 타이틀 텍스트 */}
+      <div className="loading-title-container">
+        <h1 className="loading-title-main">
+          <span className="brush-char" style={{ animationDelay: '1.5s' }}>마</span>
+          <span className="brush-char" style={{ animationDelay: '1.7s' }}>교</span>
+          <span className="brush-char" style={{ animationDelay: '1.9s' }}>주</span>
+          <span className="brush-char" style={{ animationDelay: '2.1s' }}>야</span>
+          <span className="brush-char" style={{ animationDelay: '2.3s' }}>담</span>
+        </h1>
+        <h2 className="loading-title-sub">
+          <span className="brush-char-cn" style={{ animationDelay: '2.6s' }}>魔</span>
+          <span className="brush-char-cn" style={{ animationDelay: '2.7s' }}>敎</span>
+          <span className="brush-char-cn" style={{ animationDelay: '2.8s' }}>主</span>
+          <span className="brush-char-cn" style={{ animationDelay: '2.9s' }}>夜</span>
+          <span className="brush-char-cn" style={{ animationDelay: '3.0s' }}>談</span>
+        </h2>
+      </div>
+    </div>
+  );
+}
+
 const tabs = [
   { id: "intro", label: "소개", subtitle: "이야기의 시작" },
   { id: "world", label: "세계관", subtitle: "마교가 지배하는 세상" },
@@ -102,6 +145,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const currentTab = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
   const content = tabContent[activeTab] || tabContent.intro;
@@ -122,104 +166,108 @@ export default function App() {
   }, [activeTab]);
 
   return (
-    <div className="page">
-      <header className="banner">
-        <div 
-          className="banner-overlay"
-          style={{ transform: `translateY(${scrollY * 0.3}px)` }}
-        />
-        
-        <nav className="nav">
-          <div className="logo">
-            <span className="logo-icon">☯</span>
-            <span className="logo-text">김타브</span>
+    <>
+      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      
+      <div className="page">
+        <header className="banner">
+          <div 
+            className="banner-overlay"
+            style={{ transform: `translateY(${scrollY * 0.3}px)` }}
+          />
+          
+          <nav className="nav">
+            <div className="logo">
+              <span className="logo-icon">☯</span>
+              <span className="logo-text">김타브</span>
+            </div>
+          </nav>
+          
+          <div className="banner-title">
+            <div className="title-decoration top" />
+            <h1 className="main-title">
+              <span className="title-ko">마교주야담</span>
+              <span className="title-divider">·</span>
+              <span className="title-cn">魔敎主夜談</span>
+            </h1>
+            <p className="subtitle">밤마다 펼쳐지는 마교주의 이야기</p>
+            <div className="title-decoration bottom" />
+          </div>
+
+          <div className="banner-scroll-indicator">
+            <div className="scroll-line" />
+            <span className="scroll-text">SCROLL</span>
+          </div>
+        </header>
+
+        <nav className="mid-nav">
+          <div className="mid-nav-inner">
+            <ul className="mid-nav-list">
+              {tabs.map((tab, index) => (
+                <li key={tab.id} style={{ animationDelay: `${index * 0.1}s` }}>
+                  <button
+                    className={`mid-nav-button${
+                      activeTab === tab.id ? " is-active" : ""
+                    }`}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    <span className="tab-label">{tab.label}</span>
+                    {activeTab === tab.id && <div className="tab-indicator" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </nav>
-        
-        <div className="banner-title">
-          <div className="title-decoration top" />
-          <h1 className="main-title">
-            <span className="title-ko">마교주야담</span>
-            <span className="title-divider">·</span>
-            <span className="title-cn">魔敎主夜談</span>
-          </h1>
-          <p className="subtitle">밤마다 펼쳐지는 마교주의 이야기</p>
-          <div className="title-decoration bottom" />
-        </div>
 
-        <div className="banner-scroll-indicator">
-          <div className="scroll-line" />
-          <span className="scroll-text">SCROLL</span>
-        </div>
-      </header>
-
-      <nav className="mid-nav">
-        <div className="mid-nav-inner">
-          <ul className="mid-nav-list">
-            {tabs.map((tab, index) => (
-              <li key={tab.id} style={{ animationDelay: `${index * 0.1}s` }}>
-                <button
-                  className={`mid-nav-button${
-                    activeTab === tab.id ? " is-active" : ""
-                  }`}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  <span className="tab-label">{tab.label}</span>
-                  {activeTab === tab.id && <div className="tab-indicator" />}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </nav>
-
-      <main className="main">
-        <div className={`section-head ${isVisible ? 'visible' : ''}`}>
-          <div className="section-title-wrapper">
-            <div className="section-ornament left">◆</div>
-            <div>
-              <h2 className="section-title">{currentTab.label}</h2>
-              <p className="section-subtitle">{currentTab.subtitle}</p>
+        <main className="main">
+          <div className={`section-head ${isVisible ? 'visible' : ''}`}>
+            <div className="section-title-wrapper">
+              <div className="section-ornament left">◆</div>
+              <div>
+                <h2 className="section-title">{currentTab.label}</h2>
+                <p className="section-subtitle">{currentTab.subtitle}</p>
+              </div>
+              <div className="section-ornament right">◆</div>
             </div>
-            <div className="section-ornament right">◆</div>
           </div>
-        </div>
-        
-        <div className={`content-grid ${isVisible ? 'visible' : ''}`}>
-          {content.items.map((item, index) => (
-            <article 
-              key={index} 
-              className="content-card"
-              style={{ animationDelay: `${index * 0.15}s` }}
-            >
-              <div className="card-header">
-                {item.icon && <div className="card-icon">{item.icon}</div>}
-                {item.badge && (
-                  <span className={`card-badge ${item.color || ''}`}>
-                    {item.badge}
-                  </span>
-                )}
-              </div>
-              <h3 className="card-title">{item.title}</h3>
-              <p className="card-content">{item.content}</p>
-              <div className="card-footer">
-                <div className="card-ornament" />
-              </div>
-            </article>
-          ))}
-        </div>
-      </main>
+          
+          <div className={`content-grid ${isVisible ? 'visible' : ''}`}>
+            {content.items.map((item, index) => (
+              <article 
+                key={index} 
+                className="content-card"
+                style={{ animationDelay: `${index * 0.15}s` }}
+              >
+                <div className="card-header">
+                  {item.icon && <div className="card-icon">{item.icon}</div>}
+                  {item.badge && (
+                    <span className={`card-badge ${item.color || ''}`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+                <h3 className="card-title">{item.title}</h3>
+                <p className="card-content">{item.content}</p>
+                <div className="card-footer">
+                  <div className="card-ornament" />
+                </div>
+              </article>
+            ))}
+          </div>
+        </main>
 
-      <footer className="footer">
-        <div className="footer-ornament" />
-        <p className="footer-text">
-          <span className="footer-symbol">◈</span>
-          © 2026 김타브. All rights reserved.
-          <span className="footer-symbol">◈</span>
-        </p>
-        <div className="footer-ornament" />
-      </footer>
-    </div>
+        <footer className="footer">
+          <div className="footer-ornament" />
+          <p className="footer-text">
+            <span className="footer-symbol">◈</span>
+            © 2026 김타브. All rights reserved.
+            <span className="footer-symbol">◈</span>
+          </p>
+          <div className="footer-ornament" />
+        </footer>
+      </div>
+    </>
   );
 }
