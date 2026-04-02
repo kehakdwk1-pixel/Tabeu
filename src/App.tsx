@@ -210,7 +210,7 @@ function WorldSection() {
         <div className="divider" />
         <div className="label-row">강호 지도 · 세력 구도</div>
         <ImgSlot
-          src="/map.jpg"
+          src="/map.png"
           className="map-slot"
           icon="地"
           label="강호 지도"
@@ -233,7 +233,7 @@ function FactionSection() {
       <div className="section-body">
         <div className="label-row">본산 · 십만대산</div>
         <ImgSlot
-          src="/honsan.jpg"
+          src="/honsan.png"
           className="honsan-slot"
           icon="山"
           label="천마신교 본산 · 만마전"
