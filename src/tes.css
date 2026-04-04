@@ -156,25 +156,8 @@ body::before{
 .bgm-btn:hover{border-color:var(--red2);color:var(--red3);}
 .sidebar-footer-text{font-size:0.55rem;letter-spacing:0.2em;color:rgba(245,240,230,0.18);font-family:'Bebas Neue',sans-serif;}
 
-/* 이걸 .main { ... } 바로 위에 추가 */
-.main-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-}
-
 /* ══════════ MAIN ══════════ */
-.main {
-  flex: 1;
-  min-height: 0;        /* ← 이거 추가 */
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
-  z-index: 1;
-}
+.main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1;}
 
 /* ══════════ SECTION WRAP ══════════ */
 .section-wrap{display:flex;flex-direction:column;min-height:100%;}
@@ -189,7 +172,7 @@ body::before{
 }
 .section-header::before{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(245,240,230,0) 0%,rgba(245,240,230,0.3) 100%);
+  background:linear-gradient(180deg,rgba(245,240,230,0.35) 0%,rgba(245,240,230,0.92) 100%);
 }
 .section-header::after{
   content:'';position:absolute;left:0;bottom:0;top:0;width:4px;
@@ -204,11 +187,11 @@ body::before{
 .sh-title{
   position:relative;z-index:1;
   font-size:clamp(2.2rem,4vw,3.8rem);font-weight:900;
-  color:var(--paper);letter-spacing:0.04em;line-height:1.05;
+  color:var(--ink);letter-spacing:0.04em;line-height:1.05;
   display:flex;align-items:baseline;gap:0.8rem;
 }
-.sh-hanja{font-family:'Noto Serif SC',serif;font-size:0.55em;color:rgba(201, 231, 248, 0.8);font-weight:400;letter-spacing:0.08em;}
-.sh-desc{position:relative;z-index:1;font-size:0.82rem;line-height:1.85;color:rgba(255,255,255,0.85);margin-top:0.7rem;max-width:780px;}
+.sh-hanja{font-family:'Noto Serif SC',serif;font-size:0.55em;color:var(--ink3);font-weight:400;letter-spacing:0.08em;}
+.sh-desc{position:relative;z-index:1;font-size:0.82rem;line-height:1.85;color:var(--ink2);margin-top:0.7rem;max-width:780px;}
 
 /* ══════════ SECTION BODY ══════════ */
 .section-body{padding:2rem 2.5rem 4rem;flex:1;}
@@ -223,24 +206,24 @@ body::before{
 .divider::before{content:'';position:absolute;left:0;top:-2px;width:32px;height:5px;background:var(--red);}
 
 /* ══════════ WORLD / FACTION GRID ══════════ */
-.faction-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--rule2);border:1px solid var(--rule2);width:100%;}
+.faction-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule2);border:1px solid var(--rule2);width:100%;}
 @media(max-width:800px){.faction-grid{grid-template-columns:1fr;}}
 .faction-card{background:var(--paper);padding:1.4rem 1.5rem;position:relative;transition:background 0.25s;}
 .faction-card:hover{background:var(--paper2);}
 .faction-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .fc-tag{font-family:'Noto Serif SC',serif;font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;}
 .fc-name{font-size:0.9rem;font-weight:700;color:var(--ink);margin-bottom:0.15rem;}
-.fc-hanja{font-size:0.75rem;color:var(--ink3);margin-bottom:0.9rem;font-family:'Noto Serif SC',serif;letter-spacing:0.1em;}
+.fc-hanja{font-size:0.65rem;color:var(--ink3);margin-bottom:0.9rem;font-family:'Noto Serif SC',serif;letter-spacing:0.1em;}
 .fc-desc{font-size:0.8rem;line-height:1.9;color:var(--ink2);margin-bottom:0.9rem;}
 .fc-subs{list-style:none;display:flex;flex-direction:column;gap:0.35rem;}
-.fc-subs li{font-size:0.80rem;color:var(--ink2);padding-left:1rem;position:relative;line-height:1.6;}
+.fc-subs li{font-size:0.76rem;color:var(--ink3);padding-left:1rem;position:relative;line-height:1.6;}
 .fc-subs li::before{content:'·';position:absolute;left:0;color:var(--red2);}
 
 .rules-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule2);border:1px solid var(--rule2);}
 @media(max-width:700px){.rules-row{grid-template-columns:1fr;}}
 .rule-card{background:var(--paper);padding:1.4rem 1.5rem;position:relative;}
 .rule-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,var(--red),transparent);opacity:0.4;}
-.rule-num{font-family:'Cormorant Garamond',serif;font-size:3.5rem;color:#8a1a28;line-height:1;display:block;margin-bottom:0.6rem;}
+.rule-num{font-family:'Cormorant Garamond',serif;font-size:3.5rem;color:rgba(158,24,32,0.08);line-height:1;display:block;margin-bottom:0.6rem;}
 .rule-text{font-size:0.78rem;line-height:1.9;color:var(--ink2);}
 .rule-text b{color:var(--ink);display:block;margin-bottom:0.3rem;}
 
@@ -263,7 +246,7 @@ body::before{
 .houses-list{display:flex;flex-direction:column;border:1px solid var(--rule2);}
 .house-row{
   display:grid;grid-template-columns:40px 60px 1fr 1.4fr;
-  gap:0.6rem;align-items:center;
+  gap:1.2rem;align-items:center;
   padding:0.9rem 1.2rem;border-bottom:1px solid var(--rule2);
   background:var(--paper);transition:background 0.2s;
 }
@@ -276,7 +259,7 @@ body::before{
 .hr-dept{font-size:0.75rem;color:var(--ink3);margin-top:0.15rem;}
 .hr-leader{font-size:0.75rem;color:var(--ink2);margin-top:0.1rem;}
 .hr-leader b{color:var(--gold);}
-.hr-desc{font-size:0.83rem;line-height:1.5;color:var(--ink2);}
+.hr-desc{font-size:0.83rem;line-height:1.8;color:var(--ink2);}
 
 /* ══════════ TWO-COL INFO ══════════ */
 .two-col-info{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule2);border:1px solid var(--rule2);}
@@ -354,14 +337,11 @@ body::before{
   font-size:0.65rem;color:rgba(26,20,12,0.25);
 }
 .ct-body{padding:0.9rem 1rem;}
-.ct-body-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;}
-.ct-alias-row{display:flex;align-items:flex-start;justify-content:space-between;gap:0.6rem;margin-top:0.25rem;}
-.ct-sign{width:80px;height:auto;object-fit:contain;flex-shrink:0;margin-top:-2rem;}
-.ct-group{font-size:0.72rem;letter-spacing:0.22em;color:var(--red2);font-family:'Bebas Neue',sans-serif;margin-bottom:0.25rem;}
+.ct-group{font-size:0.52rem;letter-spacing:0.22em;color:var(--red2);font-family:'Bebas Neue',sans-serif;margin-bottom:0.25rem;}
 .ct-name{font-size:1.1rem;font-weight:800;color:var(--ink);line-height:1;}
-.ct-hanja{font-size:0.80rem;color:var(--ink3);font-family:'Noto Serif SC',serif;margin-bottom:0.2rem;}
-.ct-realm{font-size:0.88rem;font-weight:700;margin-bottom:0.05rem;}
-.ct-alias{font-size:0.75rem;color:var(--ink3);}
+.ct-hanja{font-size:0.75rem;color:var(--ink3);font-family:'Noto Serif SC',serif;margin-bottom:0.3rem;}
+.ct-realm{font-size:0.7rem;font-weight:700;margin-bottom:0.15rem;}
+.ct-alias{font-size:0.65rem;color:var(--ink3);}
 
 /* ══════════ MODAL ══════════ */
 .modal-overlay{
@@ -369,7 +349,7 @@ body::before{
   background:rgba(14,11,20,0.7);
   backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;
-  padding:1.5rem;
+  padding:2rem;
   animation:fadeIn 0.25s ease;
 }
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -382,7 +362,6 @@ body::before{
   animation:slideUp 0.3s ease;
   border:1px solid var(--rule2);
 }
-
 @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
 .modal-close{
@@ -398,18 +377,10 @@ body::before{
 
 
 .modal-photo{
-  position:relative;overflow:hidden;
+  position:relative;aspect-ratio:3/2;overflow:hidden;
   background:var(--paper3);flex-shrink:0;
-  aspect-ratio:15/11;
-  max-height:60vh;
-  width:100%;
 }
-.modal-photo img{
-  width:100%;height:100%;
-  object-fit:cover;object-position:center top;
-  display:block;
-  filter:brightness(0.92) saturate(0.8) sepia(0.06);
-}
+.modal-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(0.88) saturate(0.75) sepia(0.1);}
 .modal-photo-empty{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   font-family:'Noto Serif SC',serif;font-size:5rem;font-weight:900;opacity:0.1;
@@ -482,346 +453,3 @@ body::before{
 .ml-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:0.3rem;}
 .ml-name{font-size:0.78rem;font-weight:700;color:var(--ink);margin-bottom:0.15rem;}
 .ml-sub{font-size:0.68rem;color:var(--ink3);line-height:1.5;}
-
-/* ══════════════════════════════════════
-   MOBILE OPTIMIZATION
-   breakpoints: 768px (tablet), 480px (phone)
-══════════════════════════════════════ */
-
-/* ── 사이드바 → 하단 탭바 ── */
-@media (max-width: 768px) {
-  html, body { overflow: hidden; }
-
-  .main-wrap {
-    order: 1;   /* ← main 위에 오게 */
-  }
-
-  .app {
-    flex-direction: column;
-    height: 100dvh;
-  }
-
-  .footer {
-    padding: 0.5rem 1rem;
-  }
-  .footer-copy {
-    display: none;  /* 모바일에선 숨기기 */
-  }
-
-  /* 사이드바 숨기고 하단 탭바로 전환 */
-  .sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    border-right: none;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    order: 2; /* main 아래 */
-    flex-shrink: 0;
-  }
-
-  .sidebar-logo { display: none; }
-
-  .sidebar-nav {
-    flex-direction: row;
-    flex: 1;
-    padding: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .snav-item {
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 0.3rem;
-    gap: 0.2rem;
-    border-right: none;
-    border-top: 2px solid transparent;
-    border-bottom: none;
-    min-width: 60px;
-  }
-  .snav-item::before {
-    top: 0; bottom: auto; left: 0; right: 0;
-    width: auto; height: 2px;
-  }
-  .snav-item.active { border-top-color: var(--red2); }
-
-  .snav-num { display: none; }
-  .snav-char { font-size: 1.2rem; }
-  .snav-labels { align-items: center; }
-  .snav-label { font-size: 0.6rem; }
-  .snav-sub { display: none; }
-
-  .sidebar-footer {
-    padding: 0 0.8rem;
-    border-top: none;
-    border-left: 1px solid rgba(255,255,255,0.06);
-    flex-direction: column;
-    gap: 0.2rem;
-    justify-content: center;
-  }
-  .sidebar-footer-text { font-size: 0.45rem; }
-
-  /* 메인 영역 */
-  .main { flex: 1; overflow-y: auto; }
-  .footer { order: 2; }
-
-  /* 섹션 헤더 */
-  .section-header { padding: 1.5rem 1.2rem 1.4rem; }
-  .sh-title { font-size: clamp(1.6rem, 6vw, 2.4rem); }
-  .sh-hanja { font-size: 0.45em; }
-  .sh-desc { font-size: 0.78rem; margin-top: 0.5rem; }
-  .sh-eyebrow { font-size: 0.6rem; }
-
-  /* 섹션 바디 */
-  .section-body { padding: 1.4rem 1rem 4rem; }
-
-  /* 세력 그리드 */
-  .faction-grid { grid-template-columns: 1fr; }
-  .faction-card { border-right: none; }
-
-  /* 규율 그리드 */
-  .rules-row { grid-template-columns: 1fr; }
-  .rule-card { border-right: none; }
-
-  /* 조직도 */
-  .org-wrap { padding: 1rem 0.8rem; }
-  .org-box { padding: 0.7rem 1.2rem; }
-  .org-sub-box { min-width: 75px; padding: 0.5rem 0.6rem; }
-  .ob-name { font-size: 0.72rem; }
-  .ob-sub { font-size: 0.55rem; }
-
-  /* 마도칠문 리스트 */
-  .house-row {
-    grid-template-columns: 32px 44px 1fr;
-    grid-template-rows: auto auto;
-    gap: 0.6rem 0.8rem;
-  }
-  .hr-desc {
-    grid-column: 1 / -1;
-    font-size: 0.75rem;
-    padding-top: 0.4rem;
-    border-top: 1px solid var(--rule);
-  }
-  .hr-num { font-size: 1.1rem; }
-  .hr-kanji { font-size: 1.4rem; }
-  .hr-name { font-size: 0.82rem; }
-
-  /* tci 그리드 */
-  .two-col-info { grid-template-columns: 1fr; }
-
-  /* 무공 경지 테이블 */
-  .realm-table { border: 1px solid var(--rule2); }
-  .rt-row { grid-template-columns: 1fr; }
-  .rt-row > div:first-child {
-    border-right: none;
-    border-bottom: 1px solid var(--rule2);
-    padding: 1rem 1.2rem 0.8rem;
-    background: var(--paper3);
-  }
-  .rt-row > div:last-child { padding: 0.8rem 1.2rem 1rem; }
-
-  /* 인물 그리드 */
-  .chars-grid { grid-template-columns: repeat(2, 1fr); }
-  .ct-body { padding: 0.7rem 0.8rem; }
-  .ct-name { font-size: 0.95rem; }
-  .ct-hanja { font-size: 0.68rem; }
-  .ct-realm { font-size: 0.65rem; }
-  .ct-alias { font-size: 0.6rem; }
-
-  /* 모달 */
-  .modal { max-height: 95dvh; margin: 0.5rem; width: calc(100% - 1rem); }
-  .modal-inner { flex-direction: column; }
-  .modal-photo { aspect-ratio: 3/2; min-height: unset !important; }
-  .modal-info { padding: 1.2rem; }
-  .modal-name { font-size: 1.5rem; }
-
-  /* 지도/이미지 슬롯 */
-  .map-slot { aspect-ratio: 4/3; }
-  .honsan-slot { aspect-ratio: 16/9; }
-
-  /* label-row */
-  .label-row { font-size: 0.6rem; margin-bottom: 0.8rem; }
-  .divider { margin: 1.2rem 0; }
-}
-
-/* ── 작은 폰 (480px 이하) ── */
-@media (max-width: 480px) {
-  .section-header { padding: 1.2rem 1rem 1.2rem; }
-  .section-body { padding: 1.2rem 0.8rem 4rem; }
-
-  .chars-grid { grid-template-columns: repeat(2, 1fr); }
-
-  .sh-title { font-size: clamp(1.4rem, 7vw, 2rem); gap: 0.4rem; }
-
-  .snav-char { font-size: 1rem; }
-  .snav-label { font-size: 0.55rem; }
-
-  .org-row { gap: 0.35rem; }
-  .org-sub-box { min-width: 64px; padding: 0.4rem 0.5rem; }
-  .ob-name { font-size: 0.65rem; }
-
-  .modal-name { font-size: 1.3rem; }
-  .modal-info { padding: 1rem; }
-
-  /* 로딩 */
-  .load-title { font-size: clamp(2.2rem, 12vw, 4rem); }
-  .load-btn { font-size: 0.8rem; letter-spacing: 0.3em; }
-}
-
-/* ── 터치 디바이스 스크롤 개선 ── */
-@media (hover: none) {
-  .char-tile:hover { background: var(--paper); }
-  .char-tile:active { background: var(--paper2); }
-  .faction-card:hover { background: var(--paper); }
-  .faction-card:active { background: var(--paper2); }
-  .snav-item:hover { background: none; }
-  .house-row:hover { background: var(--paper); }
-}
-
-/* ══════════ MODAL NAV ══════════ */
-/* modal-nav 비워둠 - modal-char-nav로 대체 */
-
-@media (max-width: 768px) {
-  .modal-char-nav { padding: 0.8rem 1rem; }
-}
-
-/* ══════════ SECTION FADE-IN ══════════ */
-.section-fade {
-  animation: sectionFadeIn 0.35s ease forwards;
-}
-@keyframes sectionFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ══════════ MODAL IMAGE SLIDER ══════════ */
-/* ── 이미지 라벨 탭 ── */
-.modal-img-tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0;
-  padding: 0;
-  background: var(--ink);
-  position: relative;
-}
-/* 중앙 구분선 */
-.modal-img-tabs::before {
-  content: '';
-  position: absolute;
-  left: 50%; top: 20%; bottom: 20%;
-  width: 1px;
-  background: rgba(255,255,255,0.12);
-}
-.modal-img-tab {
-  flex: 1;
-  padding: 0.7rem 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  border: none;
-  background: transparent;
-  color: rgba(237,232,224,0.45);
-  cursor: pointer;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 600;
-  transition: all 0.25s;
-  text-align: center;
-  position: relative;
-}
-.modal-img-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 20%; right: 20%;
-  height: 2px;
-  background: transparent;
-  transition: background 0.25s;
-}
-.modal-img-tab:hover {
-  color: rgba(237,232,224,0.8);
-}
-.modal-img-tab.active {
-  color: #fff;
-}
-.modal-img-tab.active::after {
-  background: currentColor;
-}
-
-/* ── 캐릭터 이동 버튼 ── */
-.modal-char-nav {
-  display: flex; gap: 0.5rem;
-  padding: 1rem 1.5rem 1.2rem;
-  border-top: 1px solid var(--rule);
-  margin-top: auto;
-}
-.modal-char-btn {
-  flex: 1; padding: 0.55rem 1rem;
-  font-size: 0.72rem; letter-spacing: 0.12em;
-  border: 1px solid var(--rule2); background: var(--paper2);
-  color: var(--ink2); cursor: pointer;
-  font-family: 'Noto Serif KR', serif;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-.modal-char-btn:hover:not(:disabled) {
-  background: var(--paper3); color: var(--ink); border-color: var(--red2);
-}
-.modal-char-btn:disabled {
-  opacity: 0.3; cursor: default;
-}
-
-/* ══════════ FOOTER ══════════ */
-.footer {
-  flex-shrink: 0;
-  padding: 1rem 2.5rem;
-  background: var(--paper2);
-  border-top: 1px solid var(--rule2);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  position: relative;
-  z-index: 1;
-}
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--red) 0%, transparent 60%);
-  opacity: 0.4;
-}
-.footer-logo {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: 0.1em;
-}
-.footer-copy {
-  font-size: 0.82rem;
-  color: var(--ink);
-  letter-spacing: 0.1em;
-  font-family: 'Noto Serif SC', serif;
-}
-.footer-tag {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
-  color: var(--ink3);
-  font-family: 'Bebas Neue', sans-serif;
-}
-
-.footer-hint {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
-  color: var(--ink3);
-  font-family: 'Bebas Neue', sans-serif;
-}
-
-@media (max-width: 768px) {
-  .footer {
-    padding: 0.7rem 1rem;
-    flex-direction: column;
-    gap: 0.3rem;
-    text-align: center;
-  }
-}

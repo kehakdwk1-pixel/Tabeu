@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import "./app.css";
 
 /* ═══════════ TYPES ═══════════ */
-interface Character { id:number; name:string; hanja:string; title:string; alias:string; aliasH:string; group:string; realm:string; realmSub:string; arts:string; weapon:string; desc:string; accent:string; detailCount?:number; detailLabels?:string[]; }
+interface Character { id:number; name:string; hanja:string; title:string; alias:string; aliasH:string; group:string; realm:string; realmSub:string; arts:string; weapon:string; desc:string; accent:string; }
 interface Realm     { level:number; name:string; hanja:string; color:string; bar:number; desc:string; }
 interface House     { name:string; hanja:string; dept:string; role:string; color:string; leader:string; desc:string; }
 
@@ -18,10 +18,10 @@ const CHARS: Character[] = [
   { id:8,  name:"현무홍", hanja:"玄武弘", title:"현마검가 가주 · 무경관주", alias:"현천검주", aliasH:"玄天劍主", group:"마도칠문", realm:"극마",   realmSub:"입문(入門)", arts:"현마검법 · 태을현마신공",       weapon:"마검 현영(玄影)",              desc:"고고하고 오만한 귀족. 혈통과 격을 중시하며, 피나 더러움 같은 추한 것을 병적으로 혐오한다. 타인을 가문의 격에 따라 나누어 대하는 선민의식이 강하다.", accent:"#9090e0" },
   { id:9,  name:"몽예화", hanja:"夢蕊華", title:"몽환마가 가주 · 천상관주", alias:"천음마희", aliasH:"天音魔姬", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"몽환대법 · 섭혼음공",           weapon:"비파 화연(華筵)",              desc:"관심 중독 성향의 나르시시스트. 세상의 중심이 자신이라고 믿으며, 변덕스러운 기분에 따라 타인의 감정을 장난감처럼 가지고 논다.", accent:"#d080c0" },
   { id:10, name:"설항아", hanja:"雪姮娥", title:"빙백마가 가주 · 암류관주", alias:"빙궁선자", aliasH:"氷宮仙子", group:"마도칠문", realm:"극마",   realmSub:"입문(入門)", arts:"빙백신장 · 한빙검법",           weapon:"마검 빙루(氷淚)",              desc:"고요하고 냉정한 통제자. 감정을 거의 드러내지 않으며, 모든 것을 이성과 원칙에 따라 판단한다. 동생인 설묘령을 아끼며, 평소에는 추위를 많이 타 털목도리를 하고 다닌다.", accent:"#90c8e8" },
-  { id:11, detailCount:2, detailLabels:["얼굴","가면"], name:"설묘령", hanja:"雪卯玲", title:"빙백마가 소가주 · 집행인", alias:"한월귀묘", aliasH:"寒月鬼卯", group:"마도칠문", realm:"절정",   realmSub:"입문(入門)", arts:"설묘광검 · 빙백광공",           weapon:"마검 백야(白夜)",              desc:"우아한 사이코패스. 살인을 '구원'이라 여기며 자신의 모든 행위를 선행이라 믿는 비틀린 자비심을 가졌다. 나른한 광기와 풍부한 감수성이 공존하는 독특한 인물.", accent:"#b0d8f0" },
+  { id:11, name:"설묘령", hanja:"雪卯玲", title:"빙백마가 소가주 · 집행인", alias:"한월귀묘", aliasH:"寒月鬼卯", group:"마도칠문", realm:"절정",   realmSub:"입문(入門)", arts:"설묘광검 · 빙백광공",           weapon:"마검 백야(白夜)",              desc:"우아한 사이코패스. 살인을 '구원'이라 여기며 자신의 모든 행위를 선행이라 믿는 비틀린 자비심을 가졌다. 나른한 광기와 풍부한 감수성이 공존하는 독특한 인물.", accent:"#b0d8f0" },
   { id:12, name:"당비연", hanja:"唐翡鳶", title:"독혈마가 가주 · 흑문관주", alias:"녹사마후", aliasH:"綠蛇魔后", group:"마도칠문", realm:"초절정", realmSub:"완숙(完熟)", arts:"혈독수 · 사영암혼",              weapon:"마조 비취(翡翠) · 독침",       desc:"능글맞고 교활한 포식자. 과도한 스킨십과 유혹적인 태도로 상대의 경계를 무너뜨린 뒤, 소유물처럼 집착하는 새디스트.", accent:"#60c870" },
   { id:13, name:"혈아진", hanja:"血我眞", title:"혈의마가 가주 · 마의관주", alias:"적혈나한", aliasH:"赤血羅漢", group:"마도칠문", realm:"초절정", realmSub:"완숙(完熟)", arts:"혈영검법 · 혈천수 · 재생술",    weapon:"마검 혈혼(血魂) · 혈주(血珠)", desc:"고통을 쾌락으로 느끼는 사이코패스. 도덕 관념이 결여되어 있으며, 상처 입고 피를 흘리는 것을 일종의 교류로 인식하는 마조히스트적 성향.", accent:"#e04040" },
-  { id:14, detailCount:2, detailLabels:["평상시","부채"], name:"천이현", hanja:"千利賢", title:"천기마가 가주 · 기공관주", alias:"만상지주", aliasH:"萬象之主", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"풍뢰선법 · 기문진법",           weapon:"마선 백우풍뢰(白羽風雷)",      desc:"온화한 가면을 쓴 궤변가. 항상 미소를 띠고 있지만, 그 속에는 아군마저 장기말로 취급하는 냉정한 계산이 숨어 있다. 말로 상대를 농락하는 것을 즐기는 하라구로 타입.", accent:"#b0e060" },
+  { id:14, name:"천이현", hanja:"千利賢", title:"천기마가 가주 · 기공관주", alias:"만상지주", aliasH:"萬象之主", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"풍뢰선법 · 기문진법",           weapon:"마선 백우풍뢰(白羽風雷)",      desc:"온화한 가면을 쓴 궤변가. 항상 미소를 띠고 있지만, 그 속에는 아군마저 장기말로 취급하는 냉정한 계산이 숨어 있다. 말로 상대를 농락하는 것을 즐기는 하라구로 타입.", accent:"#b0e060" },
   { id:15, name:"연유화", hanja:"燕宥花", title:"흑산마가 가주 · 계문관주", alias:"흑요검후", aliasH:"黑曜劍后", group:"마도칠문", realm:"초절정", realmSub:"극(極)",    arts:"흑산검법 · 현암천근공",         weapon:"중검 흑암(黑巖)",              desc:"도도하고 까칠한 철벽의 쿨데레. 약자를 혐오하는 실력주의자지만, 무심한 척 뒤에서 챙겨주는 츤데레 기질과 은근한 질투심을 가지고 있다.", accent:"#a0a0c0" },
 ];
 
@@ -112,7 +112,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
           세계관 보러가기
           <span className="load-btn-line" />
         </button>
-        <div className="load-hint" style={{ opacity: phase>=2?0.5:0 }}>♪ BGM 포함 · 하단에서 조절</div>
+        <div className="load-hint" style={{ opacity: phase>=2?0.5:0 }}>♪ BGM 포함 · 우측 하단에서 조절</div>
       </div>
     </div>
   );
@@ -363,63 +363,20 @@ function MartialSection() {
 }
 
 /* ═══════════ CHARACTER MODAL ═══════════ */
-function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
-  c: Character; onClose: () => void;
-  onPrev: () => void; onNext: () => void;
-  hasPrev: boolean; hasNext: boolean;
-}) {
+function CharModal({ c, onClose }: { c: Character; onClose: () => void }) {
   const [imgErr, setImgErr] = useState(false);
-  const [imgIdx, setImgIdx] = useState(0);
-  const count = c.detailCount ?? 1;
-
-  // c 바뀔 때 이미지 상태 초기화
-  useRef(null); // placeholder - 실제 리셋은 useEffect로
-  useEffect(() => {
-    setImgErr(false);
-    setImgIdx(0);
-  }, [c.id]);
-
-  // 키보드 네비게이션
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft" && hasPrev) onPrev();
-      if (e.key === "ArrowRight" && hasNext) onNext();
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [hasPrev, hasNext, onPrev, onNext, onClose]);
-
-  const detailSrc = count > 1
-    ? `/chars/detail/${c.id}_${imgIdx + 1}.png`
-    : `/chars/detail/${c.id}.png`;
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>✕</button>
         <div className="modal-inner" style={{display:"flex",flexDirection:"column"}}>
-          <div className="modal-photo">
+          <div className="modal-photo" style={{aspectRatio:"3/2",minHeight:"220px"}}>
             {!imgErr
-              ? <img src={detailSrc} alt={c.name} onError={() => setImgErr(true)} />
+              ? <img src={`/chars/${c.id}.png`} alt={c.name} onError={() => setImgErr(true)} />
               : <div className="modal-photo-empty"><span style={{ color: c.accent }}>{c.hanja[0]}</span></div>
             }
             <div className="modal-photo-bar" style={{ background: c.accent }} />
           </div>
-          {count > 1 && c.detailLabels && (
-            <div className="modal-img-tabs">
-              {c.detailLabels.map((label, i) => (
-                <button
-                  key={i}
-                  className={`modal-img-tab${imgIdx === i ? " active" : ""}`}
-                  style={imgIdx === i ? { background: c.accent, borderColor: c.accent, color: "#fff" } : {}}
-                  onClick={e => { e.stopPropagation(); setImgIdx(i); setImgErr(false); }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
           <div className="modal-info">
             <div className="modal-group">{c.group}</div>
             <div className="modal-name">{c.name}<span className="modal-hanja">{c.hanja}</span></div>
@@ -441,23 +398,6 @@ function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
             </div>
             <div className="modal-divider" />
             <p className="modal-desc">{c.desc}</p>
-          </div>
-          {/* 캐릭터 이동 — 정보 영역 하단 */}
-          <div className="modal-char-nav">
-            <button
-              className="modal-char-btn"
-              onClick={e => { e.stopPropagation(); if(hasPrev) onPrev(); }}
-              disabled={!hasPrev}
-            >
-              ← 이전
-            </button>
-            <button
-              className="modal-char-btn"
-              onClick={e => { e.stopPropagation(); if(hasNext) onNext(); }}
-              disabled={!hasNext}
-            >
-              다음 →
-            </button>
           </div>
         </div>
       </div>
@@ -492,12 +432,8 @@ function CharTile({ c, onSelect }: { c: Character; onSelect: () => void }) {
 /* ═══════════ CHARS SECTION ═══════════ */
 function CharsSection() {
   const [filter, setFilter] = useState<"all"|"교주직속"|"마도칠문">("all");
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Character | null>(null);
   const filtered = filter === "all" ? CHARS : CHARS.filter(c => c.group === filter);
-
-  const selected = selectedIdx !== null ? filtered[selectedIdx] : null;
-  const hasPrev = selectedIdx !== null && selectedIdx > 0;
-  const hasNext = selectedIdx !== null && selectedIdx < filtered.length - 1;
 
   return (
     <div className="section-wrap">
@@ -515,21 +451,12 @@ function CharsSection() {
           ))}
         </div>
         <div className="chars-grid">
-          {filtered.map((c, i) => (
-            <CharTile key={c.id} c={c} onSelect={() => setSelectedIdx(i)} />
+          {filtered.map(c => (
+            <CharTile key={c.id} c={c} onSelect={() => setSelected(c)} />
           ))}
         </div>
       </div>
-      {selected && (
-        <CharModal
-          c={selected}
-          onClose={() => setSelectedIdx(null)}
-          onPrev={() => setSelectedIdx(i => i !== null ? i - 1 : null)}
-          onNext={() => setSelectedIdx(i => i !== null ? i + 1 : null)}
-          hasPrev={hasPrev}
-          hasNext={hasNext}
-        />
-      )}
+      {selected && <CharModal c={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 }
@@ -547,22 +474,12 @@ export default function App() {
       {!loading && (
         <div className="app">
           <Sidebar tab={tab} setTab={setTab} bgmOn={bgmOn} toggleBgm={toggleBgm} />
-          <div className="main-wrap">
-            <main className="main">
-              <div key={tab} className="section-fade">
-                {tab === "world"   && <WorldSection />}
-                {tab === "faction" && <FactionSection />}
-                {tab === "martial" && <MartialSection />}
-                {tab === "chars"   && <CharsSection />}
-              </div>
-            </main>
-            <footer className="footer">
-              <div className="footer-logo">魔敎主夜談</div>
-              <div className="footer-copy">© 마교주야담 · All rights reserved</div>
-              <div className="footer-tag">Made by 김타브</div>
-              <div className="footer-hint">Website created by 몽유도인</div>
-            </footer>
-          </div>
+          <main className="main">
+            {tab === "world"   && <WorldSection />}
+            {tab === "faction" && <FactionSection />}
+            {tab === "martial" && <MartialSection />}
+            {tab === "chars"   && <CharsSection />}
+          </main>
         </div>
       )}
     </>
