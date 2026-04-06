@@ -1,5 +1,15 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import "./app.css";
+
+function getReadableRealmColor(hex: string) {
+  const cleaned = hex.replace(/^#/, "");
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 180 ? "var(--ink)" : hex;
+}
 
 /* ═══════════ TYPES ═══════════ */
 interface Character { id:number; name:string; hanja:string; title:string; alias:string; aliasH:string; group:string; realm:string; realmSub:string; arts:string; weapon:string; desc:string; accent:string; detailCount?:number; detailLabels?:string[]; }
@@ -18,10 +28,10 @@ const CHARS: Character[] = [
   { id:8,  name:"현무홍", hanja:"玄武弘", title:"현마검가 가주 · 무경관주", alias:"현천검주", aliasH:"玄天劍主", group:"마도칠문", realm:"극마",   realmSub:"입문(入門)", arts:"현마검법 · 태을현마신공",       weapon:"마검 현영(玄影)",              desc:"고고하고 오만한 귀족. 혈통과 격을 중시하며, 피나 더러움 같은 추한 것을 병적으로 혐오한다. 타인을 가문의 격에 따라 나누어 대하는 선민의식이 강하다.", accent:"#9090e0" },
   { id:9,  name:"몽예화", hanja:"夢蕊華", title:"몽환마가 가주 · 천상관주", alias:"천음마희", aliasH:"天音魔姬", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"몽환대법 · 섭혼음공",           weapon:"비파 화연(華筵)",              desc:"관심 중독 성향의 나르시시스트. 세상의 중심이 자신이라고 믿으며, 변덕스러운 기분에 따라 타인의 감정을 장난감처럼 가지고 논다.", accent:"#d080c0" },
   { id:10, name:"설항아", hanja:"雪姮娥", title:"빙백마가 가주 · 암류관주", alias:"빙궁선자", aliasH:"氷宮仙子", group:"마도칠문", realm:"극마",   realmSub:"입문(入門)", arts:"빙백신장 · 한빙검법",           weapon:"마검 빙루(氷淚)",              desc:"고요하고 냉정한 통제자. 감정을 거의 드러내지 않으며, 모든 것을 이성과 원칙에 따라 판단한다. 동생인 설묘령을 아끼며, 평소에는 추위를 많이 타 털목도리를 하고 다닌다.", accent:"#90c8e8" },
-  { id:11, detailCount:2, detailLabels:["가면","얼굴"], name:"설묘령", hanja:"雪卯玲", title:"빙백마가 소가주 · 집행인", alias:"한월귀묘", aliasH:"寒月鬼卯", group:"마도칠문", realm:"절정",   realmSub:"입문(入門)", arts:"설묘광검 · 빙백광공",           weapon:"마검 백야(白夜)",              desc:"자유로운 마이페이스 성격. 평소에는 토끼 가면을 쓰고 다니며 우아하고 장난기도 많아 보이지만, 임무에 들어가면 누구보다 잔혹하게 돌변하는 이중적인 면모를 지녔다.", accent:"#b0d8f0" },
+  { id:11, detailCount:2, detailLabels:["평상시","맨얼굴"], name:"설묘령", hanja:"雪卯玲", title:"빙백마가 소가주 · 집행인", alias:"한월귀묘", aliasH:"寒月鬼卯", group:"마도칠문", realm:"절정",   realmSub:"입문(入門)", arts:"설묘광검 · 빙백광공",           weapon:"마검 백야(白夜)",              desc:"자유로운 마이페이스 성격. 평소에는 토끼 가면을 쓰고 다니며 우아하고 장난기도 많아 보이지만, 임무에 들어가면 누구보다 잔혹하게 돌변하는 이중적인 면모를 지녔다.", accent:"#b0d8f0" },
   { id:12, name:"당비연", hanja:"唐翡鳶", title:"독혈마가 가주 · 흑문관주", alias:"녹사마후", aliasH:"綠蛇魔后", group:"마도칠문", realm:"초절정", realmSub:"완숙(完熟)", arts:"혈독수 · 사영암혼",              weapon:"마조 비취(翡翠) · 독침",       desc:"능글맞고 교활한 포식자. 과도한 스킨십과 유혹적인 태도로 상대의 경계를 무너뜨린 뒤, 소유물처럼 집착하는 새디스트.", accent:"#60c870" },
   { id:13, name:"혈아진", hanja:"血我眞", title:"혈의마가 가주 · 마의관주", alias:"적혈나한", aliasH:"赤血羅漢", group:"마도칠문", realm:"초절정", realmSub:"완숙(完熟)", arts:"혈영검법 · 혈천수 · 재생술",    weapon:"마검 혈혼(血魂) · 혈주(血珠)", desc:"고통을 쾌락으로 느끼는 사이코패스. 도덕 관념이 결여되어 있으며, 상처 입고 피를 흘리는 것을 일종의 교류로 인식하는 마조히스트적 성향.", accent:"#e04040" },
-  { id:14, detailCount:2, detailLabels:["가면","얼굴"], name:"천이현", hanja:"千利賢", title:"천기마가 가주 · 기공관주", alias:"만상지주", aliasH:"萬象之主", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"풍뢰선법 · 기문진법",           weapon:"마선 백우풍뢰(白羽風雷)",      desc:"온화한 가면을 쓴 궤변가. 항상 미소를 띠고 있지만, 그 속에는 아군마저 장기말로 취급하는 냉정한 계산이 숨어 있다. 말로 상대를 농락하는 것을 즐기는 하라구로 타입.", accent:"#b0e060" },
+  { id:14, detailCount:2, detailLabels:["평상시","맨얼굴"], name:"천이현", hanja:"千利賢", title:"천기마가 가주 · 기공관주", alias:"만상지주", aliasH:"萬象之主", group:"마도칠문", realm:"절정",   realmSub:"극(極)",    arts:"풍뢰선법 · 기문진법",           weapon:"마선 백우풍뢰(白羽風雷)",      desc:"온화한 가면을 쓴 궤변가. 항상 미소를 띠고 있지만, 그 속에는 아군마저 장기말로 취급하는 냉정한 계산이 숨어 있다. 말로 상대를 농락하는 것을 즐기는 하라구로 타입.", accent:"#b0e060" },
   { id:15, name:"연유화", hanja:"燕宥花", title:"흑산마가 가주 · 계문관주", alias:"흑요검후", aliasH:"黑曜劍后", group:"마도칠문", realm:"초절정", realmSub:"극(極)",    arts:"흑산검법 · 현암천근공",         weapon:"중검 흑암(黑巖)",              desc:"도도하고 까칠한 철벽의 쿨데레. 약자를 혐오하는 실력주의자지만, 무심한 척 뒤에서 챙겨주는 츤데레 기질과 은근한 질투심을 가지고 있다.", accent:"#a0a0c0" },
 ];
 
@@ -47,12 +57,24 @@ const SEVEN_HOUSES: House[] = [
 ];
 
 /* ═══════════ IMG SLOT ═══════════ */
-function ImgSlot({ src, className, icon, label, sub }: {
-  src: string; className?: string; icon: string; label: string; sub: string;
+function ImgSlot({ src, className, icon, label, sub, onClick }: {
+  src: string; className?: string; icon: string; label: string; sub: string; onClick?: () => void;
 }) {
   const [err, setErr] = useState(false);
+  const clickable = Boolean(onClick);
   return (
-    <div className={`img-slot${className ? " " + className : ""}`}>
+    <div
+      className={`img-slot${className ? " " + className : ""}${clickable ? " clickable" : ""}`}
+      onClick={onClick}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : -1}
+      onKeyDown={clickable ? (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      } : undefined}
+    >
       {!err
         ? <img src={src} alt={label} onError={() => setErr(true)} />
         : (
@@ -64,6 +86,26 @@ function ImgSlot({ src, className, icon, label, sub }: {
         )
       }
     </div>
+  );
+}
+
+function ImageModal({ image, onClose }: { image: { src:string; alt:string }; onClose: () => void }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  return createPortal(
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal image-only-modal" onClick={e => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-photo image-only-modal">
+          <img src={image.src} alt={image.alt} />
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -160,10 +202,12 @@ function Sidebar({ tab, setTab, bgmOn, toggleBgm }: { tab:TabId; setTab:(t:TabId
 
 /* ═══════════ WORLD ═══════════ */
 function WorldSection() {
+  const [modalImage, setModalImage] = useState<{ src:string; alt:string } | null>(null);
+
   return (
     <div className="section-wrap">
       <header className="section-header">
-        <div className="sh-eyebrow">Chapter 01</div>
+        <div className="sh-eyebrow">explanation 01</div>
         <h1 className="sh-title">세계관<span className="sh-hanja">世界觀</span></h1>
         <p className="sh-desc">가정(嘉靖) 황제 치세(1522–1566)부터 시작하여 융경, 만력 연간으로 이어지는 시기. 황실의 권위는 실추되었고, 관료 사회는 부패했다. 이러한 혼란을 틈타, 정규 군사력으로는 해결할 수 없는 문제들을 무림의 힘으로 해결하려는 움직임이 생겨났다. 이로 인해 무림 세력들의 영향력이 이전보다 훨씬 커졌으며, 사실상 치외법권적인 자치권을 누리는 거대 문파들이 등장한다.</p>
       </header>
@@ -202,20 +246,22 @@ function WorldSection() {
           ].map((r, i) => (
             <div className="rule-card" key={i}>
               <span className="rule-num">{"一二三"[i]}</span>
-              <p className="rule-text"><b>{r.split("—")[0]}</b>— {r.split("—")[1]}</p>
+              <p className="rule-text"><b>{r.split("—")[0]}</b> {r.split("—")[1]}</p>
             </div>
           ))}
         </div>
 
         <div className="divider" />
-        <div className="label-row">강호 지도 · 세력 구도</div>
+        <div className="label-row">강호 지도</div>
         <ImgSlot
           src="/map.png"
           className="map-slot"
           icon="地"
           label="강호 지도"
-          sub="지도 이미지를 /public/map.jpg 에 넣어주세요"
+          sub="지도 이미지"
+          onClick={() => setModalImage({ src: "/map.png", alt: "강호 지도" })}
         />
+        {modalImage && <ImageModal image={modalImage} onClose={() => setModalImage(null)} />}
       </div>
     </div>
   );
@@ -223,10 +269,12 @@ function WorldSection() {
 
 /* ═══════════ FACTION ═══════════ */
 function FactionSection() {
+  const [modalImage, setModalImage] = useState<{ src:string; alt:string } | null>(null);
+
   return (
     <div className="section-wrap">
       <header className="section-header">
-        <div className="sh-eyebrow">Chapter 02</div>
+        <div className="sh-eyebrow">explanation 02</div>
         <h1 className="sh-title">천마신교<span className="sh-hanja">天魔神敎</span></h1>
         <p className="sh-desc">천마신교는 단순한 무림 문파가 아닌, 천마(天魔)를 유일신으로 섬기는 거대한 종교적 군사 집단이다. 십만대산이라는 험준한 자연의 요새에 자리 잡고 있으며, 외부 강호와는 철저히 격리된 독자적인 사회와 문화를 구축한다.</p>
       </header>
@@ -237,8 +285,10 @@ function FactionSection() {
           className="honsan-slot"
           icon="山"
           label="천마신교 본산 · 만마전"
-          sub="이미지를 /public/honsan.jpg 에 넣어주세요"
+          sub="천마신교 이미지"
+          onClick={() => setModalImage({ src: "/honsan.png", alt: "천마신교 본산 · 만마전" })}
         />
+        {modalImage && <ImageModal image={modalImage} onClose={() => setModalImage(null)} />}
         <div className="divider" />
         {/* Org */}
         <div className="label-row">조직 구조</div>
@@ -326,7 +376,7 @@ function MartialSection() {
   return (
     <div className="section-wrap">
       <header className="section-header">
-        <div className="sh-eyebrow">Chapter 03</div>
+        <div className="sh-eyebrow">explanation 03</div>
         <h1 className="sh-title">무공 체계<span className="sh-hanja">武功體系</span></h1>
         <p className="sh-desc">무공의 경지는 단순히 기술의 숙련도를 넘어, 내공의 깊이와 무(武)에 대한 깨달음의 정도를 나타내는 척도다.</p>
       </header>
@@ -379,6 +429,13 @@ function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
     setImgIdx(0);
   }, [c.id]);
 
+  // 모달 오픈 시 배경 스크롤 잠금
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, []);
+
   // 키보드 네비게이션
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -394,12 +451,12 @@ function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
     ? `/chars/detail/${c.id}_${imgIdx + 1}.png`
     : `/chars/detail/${c.id}.png`;
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal char-detail-modal" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>✕</button>
         <div className="modal-inner" style={{display:"flex",flexDirection:"column"}}>
-          <div className="modal-photo">
+          <div className="modal-photo char-detail-photo">
             {!imgErr
               ? <img src={detailSrc} alt={c.name} onError={() => setImgErr(true)} />
               : <div className="modal-photo-empty"><span style={{ color: c.accent }}>{c.hanja[0]}</span></div>
@@ -461,8 +518,7 @@ function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>, document.body);
 }
 
 /* ═══════════ CHAR TILE ═══════════ */
@@ -482,7 +538,7 @@ function CharTile({ c, onSelect }: { c: Character; onSelect: () => void }) {
         <div className="ct-group">{c.group}</div>
         <div className="ct-name">{c.name}</div>
         <div className="ct-hanja">{c.hanja}</div>
-        <div className="ct-realm" style={{ color: c.accent }}>{c.realm}</div>
+        <div className="ct-realm" style={{ color: getReadableRealmColor(c.accent) }}>{c.realm}</div>
         <div className="ct-alias">{c.alias}</div>
       </div>
     </div>
@@ -502,7 +558,7 @@ function CharsSection() {
   return (
     <div className="section-wrap">
       <header className="section-header">
-        <div className="sh-eyebrow">Chapter 04</div>
+        <div className="sh-eyebrow">explanation 04</div>
         <h1 className="sh-title">인물 소개<span className="sh-hanja">人物紹介</span></h1>
         <p className="sh-desc">천마신교를 구성하는 15인의 인물. 카드를 클릭하면 상세 정보를 볼 수 있다.</p>
       </header>
