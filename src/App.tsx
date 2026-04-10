@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import "./app.css";
 
@@ -55,6 +55,39 @@ const SEVEN_HOUSES: House[] = [
   { name:"천기마가", hanja:"天機魔家", dept:"기공관(機巧觀)", role:"교육·연구", color:"#101810", leader:"천이현", desc:"신입 교도 교육, 무공 이론 및 전술 연구, 진법(陣法) 개발, 고서적 보관 등을 담당하는 학술 기관. 지적 우월감이 강하며, 점술이나 진법 등 신비로운 기술에 능통하다." },
   { name:"흑산마가", hanja:"黑山魔家", dept:"계문관(計文觀)", role:"행정·보급", color:"#101014", leader:"연유화", desc:"인사 관리, 식량 및 물자 보급, 시설 보수 등 교단 운영에 필요한 모든 살림을 총괄하는 행정 부서. 변화를 꺼리고 안정을 추구하는 보수적인 성향이 강하며, 꼼꼼하고 신중하게 일을 처리한다." },
 ];
+
+/* ═══════════ ANIMATION HOOK ═══════════ */
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+/* ═══════════ ANIMATED BLOCK ═══════════ */
+function FadeUp({ children, delay = 0, className = "" }: {
+  children: React.ReactNode; delay?: number; className?: string;
+}) {
+  const { ref, visible } = useInView();
+  return (
+    <div
+      ref={ref}
+      className={`anim-block${visible ? " anim-visible" : ""}${className ? " " + className : ""}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 /* ═══════════ IMG SLOT ═══════════ */
 function ImgSlot({ src, className, icon, label, sub, onClick }: {
@@ -133,9 +166,9 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
     const t2 = setTimeout(() => setPhase(2), 3000);
     return () => [t1, t2].forEach(clearTimeout);
   });
-  const handleEnter = () => { setPhase(3); setTimeout(onComplete, 900); };
+  const handleEnter = () => { setPhase(3); setTimeout(onComplete, 800); };
   return (
-    <div className="load" style={{ opacity: phase === 3 ? 0 : 1, pointerEvents: phase === 3 ? "none" : "auto" }}>
+    <div className={`load${phase === 3 ? " load-split" : ""}`} style={{ pointerEvents: phase === 3 ? "none" : "auto" }}>
       <div className="load-bg" />
       {[140, 230, 340].map((r, i) => (
         <div key={i} className="load-ring" style={{ width:r*2, height:r*2, top:`calc(50% - ${r}px)`, left:`calc(50% - ${r}px)`, animationDelay:`${i*0.6}s` }} />
@@ -213,6 +246,7 @@ function WorldSection() {
       </header>
 
       <div className="section-body">
+        <FadeUp>
         <div className="label-row">삼분지계 三分之計</div>
         <p style={{fontSize:"0.83rem",lineHeight:"1.95",color:"var(--ink2)",marginBottom:"1.5rem"}}>현재 강호는 크게 정파(正派), 사파(邪派), 그리고 마교(魔敎)라는 세 개의 거대한 축으로 나뉘어 팽팽한 긴장 관계를 유지한다.</p>
         <div className="faction-grid">
@@ -236,7 +270,9 @@ function WorldSection() {
             </div>
           ))}
         </div>
+        </FadeUp>
 
+        <FadeUp delay={100}>
         <div className="divider" />
         <div className="label-row">교단 3대 규율</div>
         <div className="rules-row">
@@ -250,7 +286,9 @@ function WorldSection() {
             </div>
           ))}
         </div>
+        </FadeUp>
 
+        <FadeUp delay={150}>
         <div className="divider" />
         <div className="label-row">강호 지도</div>
         <ImgSlot
@@ -261,6 +299,7 @@ function WorldSection() {
           sub="지도 이미지"
           onClick={() => setModalImage({ src: "/map.png", alt: "강호 지도" })}
         />
+        </FadeUp>
         {modalImage && <ImageModal image={modalImage} onClose={() => setModalImage(null)} />}
       </div>
     </div>
@@ -279,6 +318,7 @@ function FactionSection() {
         <p className="sh-desc">천마신교는 단순한 무림 문파가 아닌, 천마(天魔)를 유일신으로 섬기는 거대한 종교적 군사 집단이다. 십만대산이라는 험준한 자연의 요새에 자리 잡고 있으며, 외부 강호와는 철저히 격리된 독자적인 사회와 문화를 구축한다.</p>
       </header>
       <div className="section-body">
+        <FadeUp>
         <div className="label-row">본산 · 십만대산</div>
         <ImgSlot
           src="/honsan.png"
@@ -288,7 +328,9 @@ function FactionSection() {
           sub="천마신교 이미지"
           onClick={() => setModalImage({ src: "/honsan.png", alt: "천마신교 본산 · 만마전" })}
         />
+        </FadeUp>
         {modalImage && <ImageModal image={modalImage} onClose={() => setModalImage(null)} />}
+        <FadeUp delay={80}>
         <div className="divider" />
         {/* Org */}
         <div className="label-row">조직 구조</div>
@@ -313,7 +355,9 @@ function FactionSection() {
             ))}
           </div>
         </div>
+        </FadeUp>
 
+        <FadeUp delay={80}>
         <div className="divider" />
         <div className="label-row">마도칠문 魔道七門</div>
         <p style={{fontSize:"0.88rem",lineHeight:"1.95",color:"var(--ink2)",marginBottom:"1.5rem"}}>마도칠문은 천마신교의 심장부이자 척추를 형성하는 일곱 개의 장로 가문이다. 단순히 교단 내의 유력 가문을 넘어, 천마신교의 창립과 발전에 지대한 공을 세운 개국공신들의 후예로서 교단의 실질적인 운영을 책임지는 핵심 권력 집단이다. 각 가문은 교단 행정을 담당하는 7개의 행정전각 중 하나를 전담하여 책임지고 운영한다.</p>
@@ -331,7 +375,9 @@ function FactionSection() {
             </div>
           ))}
         </div>
+        </FadeUp>
 
+        <FadeUp delay={80}>
         <div className="divider" />
         <div className="label-row">권력 구조 · 장로원</div>
         <div className="two-col-info">
@@ -348,7 +394,9 @@ function FactionSection() {
             <p className="tci-desc">7개의 가문은 교주에 대한 충성을 공통분모로 삼으면서도, 서로를 견제하고 경쟁하며 권력의 균형을 이룬다. 이들의 복잡한 역학 관계는 천마신교 내부 정치의 핵심이다.</p>
           </div>
         </div>
+        </FadeUp>
 
+        <FadeUp delay={80}>
         <div className="divider" />
         <div className="label-row">핵심 사상 · 강자존</div>
         <div className="two-col-info">
@@ -365,6 +413,7 @@ function FactionSection() {
             <p className="tci-desc">교단 본산에는 영원히 꺼지지 않는 성화(聖火)가 타오른다. 이 불꽃은 천마의 권위와 교단의 영원성을 상징하는 신성한 상징물이다.</p>
           </div>
         </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -383,6 +432,7 @@ function MartialSection() {
       <div className="section-body">
         <div className="label-row">경지 팔단계 — 입문 · 완숙 · 극</div>
         <p style={{fontSize:"0.88rem",lineHeight:"1.95",color:"var(--ink2)",marginBottom:"1.5rem"}}>무공의 경지는 단순히 기술의 숙련도를 넘어, 내공의 깊이와 무(武)에 대한 깨달음의 정도를 나타내는 척도다. 경지는 크게 여덟 단계로 나뉘며, 각 단계는 다시 <b style={{color:"var(--ink)"}}>입문(入門) → 완숙(完熟) → 극(極)</b>의 세부 등급으로 구분된다.</p>
+        <FadeUp>
         <div className="realm-table">
           {[...REALMS].reverse().map(r => {
             const chars = realmChars(r.name);
@@ -407,6 +457,7 @@ function MartialSection() {
             );
           })}
         </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -453,7 +504,7 @@ function CharModal({ c, onClose, onPrev, onNext, hasPrev, hasNext }: {
 
   return createPortal(
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal char-detail-modal" onClick={e => e.stopPropagation()}>
+      <div className="modal char-detail-modal modal-animated" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>✕</button>
         <div className="modal-inner" style={{display:"flex",flexDirection:"column"}}>
           <div className="modal-photo char-detail-photo">
@@ -570,11 +621,13 @@ function CharsSection() {
             </button>
           ))}
         </div>
+        <FadeUp>
         <div className="chars-grid">
           {filtered.map((c, i) => (
             <CharTile key={c.id} c={c} onSelect={() => setSelectedIdx(i)} />
           ))}
         </div>
+        </FadeUp>
       </div>
       {selected && (
         <CharModal
@@ -595,16 +648,29 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabId>("world");
   const { on: bgmOn, toggle: toggleBgm, start: startBgm } = useAmbient();
-  const handleEnter = () => { startBgm(); setLoading(false); };
+
+  const mainRef = useRef<HTMLElement>(null);
+
+  const handleEnter = () => {
+    startBgm();
+    setLoading(false);
+  };
+
+  const handleTabChange = (t: TabId) => {
+    setTab(t);
+    setTimeout(() => {
+      mainRef.current?.scrollTo({ top: 0, behavior: "instant" });
+    }, 0);
+  };
 
   return (
     <>
       {loading && <LoadingScreen onComplete={handleEnter} />}
       {!loading && (
-        <div className="app">
-          <Sidebar tab={tab} setTab={setTab} bgmOn={bgmOn} toggleBgm={toggleBgm} />
+        <div className="app app-enter">
+          <Sidebar tab={tab} setTab={handleTabChange} bgmOn={bgmOn} toggleBgm={toggleBgm} />
           <div className="main-wrap">
-            <main className="main">
+            <main className="main" ref={mainRef}>
               <div key={tab} className="section-fade">
                 {tab === "world"   && <WorldSection />}
                 {tab === "faction" && <FactionSection />}
