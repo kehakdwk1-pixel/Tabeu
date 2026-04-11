@@ -90,7 +90,15 @@ body::before{
 .load-btn:hover{color:#fff;}
 .load-btn-line{display:block;width:30px;height:1px;background:var(--red2);transition:width 0.3s;}
 .load-btn:hover .load-btn-line{width:48px;}
-.load-hint{font-size:0.6rem;letter-spacing:0.2em;color:rgba(245,240,230,0.4);margin-top:1rem;font-family:'Bebas Neue',sans-serif;transition:opacity 0.9s;}
+.load-prompt{font-size:0.85rem;letter-spacing:0.18em;color:rgba(245,240,230,0.85);margin-top:1.2rem;font-family:'Bebas Neue',sans-serif;text-transform:uppercase;}
+.load-prompt .desktop-bar{display:inline;}
+.load-prompt .mobile-break{display:none;}
+@media (max-width: 768px) {
+  .load-prompt{white-space:pre-line;}
+  .load-prompt .desktop-bar{display:none;}
+  .load-prompt .mobile-break{display:block;}
+}
+.load-hint{font-size:0.72rem;letter-spacing:0.18em;color:rgba(245,240,230,0.5);margin-top:0.5rem;font-family:'Bebas Neue',sans-serif;transition:opacity 0.9s;}
 
 /* ══════════ APP LAYOUT ══════════ */
 .app{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;}
@@ -118,24 +126,6 @@ body::before{
 .sidebar-logo-text{display:flex;flex-direction:column;gap:0.2rem;}
 .sidebar-logo-text span:first-child{font-size:0.7rem;color:rgba(245,240,230,0.75);letter-spacing:0.08em;font-weight:600;}
 .sidebar-logo-text span:last-child{font-size:0.55rem;color:rgba(245,240,230,0.25);letter-spacing:0.15em;font-family:'Noto Serif SC',serif;}
-
-.sidebar-info-banner {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  margin: 0.6rem auto 0;
-  line-height: 0;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-.sidebar-info-banner img {
-  width: 100%;
-  height: 80px;
-  max-height: 96px;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
 
 .sidebar-nav{flex:1;padding:0.8rem 0;display:flex;flex-direction:column;}
 .snav-item{
@@ -588,35 +578,20 @@ body::before{
     -webkit-overflow-scrolling: touch;
   }
 
-  .sidebar-info-banner {
-    display: flex;
-    order: 2;
-    width: calc(100vw);
-    max-width: calc(100vw);
-    margin: 0 calc(50% - 50vw);
-    padding: 0;
-    overflow: hidden;
-    border-radius: 0;
-    font-size: 0;
-    line-height: 0;
-    align-items: flex-start;
-    justify-content: center;
-  }
-  .sidebar-info-banner img {
-    width: 100%;
-    max-width: 100%;
-    height: 120px;
-    max-height: none;
-    object-fit: cover;
-    display: block;
-  }
-
   .sidebar-nav {
     flex-direction: row;
     flex: 1;
     padding: 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .load-choices {
+    flex-direction: column;
+  }
+  .load-choice-divider {
+    width: 100%;
+    height: 1px;
   }
 
   .snav-item {
@@ -1037,4 +1012,72 @@ body::before{
     opacity: 1;
     transform: scale(1) translateY(0);
   }
+}
+/* ══════════ LOADING CHOICES ══════════ */
+.load-choices {
+  display: flex;
+  gap: 1px;
+  margin-top: 2.5rem;
+  background: rgba(255,255,255,0.06);
+  transition: opacity 0.9s, transform 0.9s;
+}
+.load-choice-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.4rem 1.6rem;
+  background: rgba(5,4,8,0.7);
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.load-choice-btn::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.load-choice-main::before { background: var(--red2); }
+.load-choice-guide::before { background: var(--gold2); }
+.load-choice-btn:hover { background: rgba(255,255,255,0.04); }
+.load-choice-btn:hover::before { opacity: 1; }
+
+.load-choice-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.load-choice-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(245,240,230,0.9);
+}
+.load-choice-sub {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(245,240,230,0.35);
+  font-family: 'Noto Serif KR', serif;
+}
+.load-choice-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+/* ══════════ LOADING CHOICE IMAGE ══════════ */
+.load-choice-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  max-height: 190px;
+}
+.load-choice-guide, .load-choice-main {
+  padding: 0;
+  overflow: hidden;
 }

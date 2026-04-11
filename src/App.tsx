@@ -167,6 +167,10 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
     return () => [t1, t2].forEach(clearTimeout);
   });
   const handleEnter = () => { setPhase(3); setTimeout(onComplete, 800); };
+  const handleGuide = () => {
+    window.open("https://subtle-profiterole-0f3ac0.netlify.app/", "_blank");
+  };
+
   return (
     <div className={`load${phase === 3 ? " load-split" : ""}`} style={{ pointerEvents: phase === 3 ? "none" : "auto" }}>
       <div className="load-bg" />
@@ -178,16 +182,24 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         <div className="load-title">魔敎主夜談</div>
         <div className="load-romanized">마교주야담</div>
         <div className="load-bar-wrap"><div className="load-bar" style={{width:phase>=1?"100%":"0%"}} /></div>
-        <button
-          className="load-btn"
+
+        <div
+          className="load-choices"
           style={{ opacity: phase>=2?1:0, transform: phase>=2?"translateY(0)":"translateY(10px)", pointerEvents: phase>=2?"auto":"none" }}
-          onClick={handleEnter}
         >
-          <span className="load-btn-line" />
-          세계관 보러가기
-          <span className="load-btn-line" />
-        </button>
-        <div className="load-hint" style={{ opacity: phase>=2?0.5:0 }}>♪ BGM 포함 · 하단에서 조절</div>
+          <button className="load-choice-btn load-choice-main" onClick={handleEnter}>
+            <img src="/info2.png" alt="본 사이트" className="load-choice-img" />
+          </button>
+          <div className="load-choice-divider" />
+          <button className="load-choice-btn load-choice-guide" onClick={handleGuide}>
+            <img src="/info.png" alt="강호 안내서" className="load-choice-img" />
+          </button>
+        </div>
+
+        <div className="load-prompt" style={{ opacity: phase>=2?1:0, transform: phase>=2?"translateY(0)":"translateY(4px)", transition: "opacity 0.3s, transform 0.3s" }}>
+          세계관·인물·무공 체계를 둘러보세요<span className="desktop-bar"> | </span><span className="mobile-break"></span>무협을 모른다면 강호 안내서에서 시작하세요
+        </div>
+        <div className="load-hint" style={{ opacity: phase>=2?0.75:0 }}>♪ BGM 자동재생 ON · 하단에서 조절 해주세요</div>
       </div>
     </div>
   );
@@ -211,14 +223,6 @@ function Sidebar({ tab, setTab, bgmOn, toggleBgm }: { tab:TabId; setTab:(t:TabId
           <span>魔敎主夜談</span>
         </div>
       </div>
-      <a
-        className="sidebar-info-banner"
-        href="https://subtle-profiterole-0f3ac0.netlify.app/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img src="/info1.png" alt="자세한 설명 보기" />
-      </a>
       <nav className="sidebar-nav">
         {NAV_ITEMS.map((item, i) => (
           <button key={item.id} className={`snav-item${tab===item.id?" active":""}`} onClick={()=>setTab(item.id)}>
