@@ -211,6 +211,14 @@ function Sidebar({ tab, setTab, bgmOn, toggleBgm }: { tab:TabId; setTab:(t:TabId
           <span>魔敎主夜談</span>
         </div>
       </div>
+      <a
+        className="sidebar-info-banner"
+        href="https://subtle-profiterole-0f3ac0.netlify.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/info1.png" alt="자세한 설명 보기" />
+      </a>
       <nav className="sidebar-nav">
         {NAV_ITEMS.map((item, i) => (
           <button key={item.id} className={`snav-item${tab===item.id?" active":""}`} onClick={()=>setTab(item.id)}>

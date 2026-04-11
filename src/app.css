@@ -119,6 +119,24 @@ body::before{
 .sidebar-logo-text span:first-child{font-size:0.7rem;color:rgba(245,240,230,0.75);letter-spacing:0.08em;font-weight:600;}
 .sidebar-logo-text span:last-child{font-size:0.55rem;color:rgba(245,240,230,0.25);letter-spacing:0.15em;font-family:'Noto Serif SC',serif;}
 
+.sidebar-info-banner {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0.6rem auto 0;
+  line-height: 0;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.sidebar-info-banner img {
+  width: 100%;
+  height: 80px;
+  max-height: 96px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
 .sidebar-nav{flex:1;padding:0.8rem 0;display:flex;flex-direction:column;}
 .snav-item{
   display:flex;align-items:center;gap:0.9rem;
@@ -545,16 +563,53 @@ body::before{
 
   /* 사이드바 숨기고 하단 탭바로 전환 */
   .sidebar {
-    width: 100%;
+    width: 100vw;
+    max-width: 100vw;
     height: auto;
     flex-direction: row;
+    flex-wrap: wrap;
     border-right: none;
     border-top: 1px solid rgba(255,255,255,0.06);
     order: 2; /* main 아래 */
     flex-shrink: 0;
+    margin: 0 calc(-50vw + 50%);
+    padding: 0;
   }
 
   .sidebar-logo { display: none; }
+
+  .sidebar-nav {
+    order: 1;
+    width: 100%;
+    flex-direction: row;
+    flex: 1;
+    padding: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar-info-banner {
+    display: flex;
+    order: 2;
+    width: calc(100vw);
+    max-width: calc(100vw);
+    margin: 0 calc(50% - 50vw);
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0;
+    font-size: 0;
+    line-height: 0;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .sidebar-info-banner img {
+    width: 100%;
+    max-width: 100%;
+    height: 120px;
+    max-height: none;
+    object-fit: cover;
+    display: block;
+  }
 
   .sidebar-nav {
     flex-direction: row;
